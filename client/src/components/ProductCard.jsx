@@ -19,7 +19,7 @@ const ProductCard = ({ product, loading }) => {
         overflow="hidden"
         p="4"
         shadow="md">
-        <Image />
+        <Image src={product.image[0]} />
         {product.stock < 5 ? (
           <Badge colorScheme="yellow">only {product.stock} left</Badge>
         ) : product.stock < 1 ? (
