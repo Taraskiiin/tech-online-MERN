@@ -5,23 +5,26 @@ import Product from "../models/Product.js";
 const productRoutes = express.Router();
 
 const getProducts = async (req, res) => {
-  try {
-    if (mongoose.connection.readyState !== 1) {
-      throw new Error("Database connection not established.");
-    }
+  const page = parseInt(req.params.page);
+  const petPage = parseInt(req.params.perPage);
 
-    const products = await Product.find({});
+  const products = await Product.find({});
 
+  if (page && perPage) {
+    const totalPages = Math.ceil(products.lenght / perPage);
+    const startIndex = (page - 1) * petPage;
+    const endIndex = startIndex + perPage;
+    const paginationProducts = products.slice(startIndex, endIndex);
     res.json({
-      products,
-      pagination: {},
+      products: paginationProducts,
+      pagination: { currentPage: page, totalPages },
     });
-  } catch (error) {
-    console.error(`Error fetching products: ${error.message}`);
-    res.status(500).json({ error: "Internal Server Error" });
+  } else {
+    res.json({ products, pagination: {} });
   }
 };
 
+productRoutes.route("/:page/:perPage").get(getProducts);
 productRoutes.route("/").get(getProducts);
 
 export default productRoutes;
