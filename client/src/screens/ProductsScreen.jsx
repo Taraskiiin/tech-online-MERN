@@ -1,22 +1,34 @@
 import React, { useEffect } from "react";
-import { Box, Wrap, Center, WrapItem } from "@chakra-ui/react";
+import {
+  Box,
+  Wrap,
+  Center,
+  WrapItem,
+  IconButton,
+  Button,
+} from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
+import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { getProducts } from "../redux/actions/productActions";
 import ProductCard from "../components/ProductCard";
 
 const ProductsScreen = () => {
   const dispatch = useDispatch();
-  const { loading, error, products, pafination } = useSelector(
-    (state) => state.product
-  );
+  const { loading, error, products, pagination, favoritesToggled } =
+    useSelector((state) => state.product);
 
   useEffect(() => {
-    dispatch(getProducts());
+    dispatch(getProducts(1));
   }, [dispatch]);
 
+  const paginationButtonClick = (page) => {
+    dispatch(getProducts(page));
+  };
+
+  console.log(pagination);
   return (
     <>
-      {products?.length > 0 && (
+      {products?.length >= 1 && (
         <Box>
           <Wrap
             spacing="30px"
@@ -31,6 +43,32 @@ const ProductsScreen = () => {
               </WrapItem>
             ))}
           </Wrap>
+          {!favoritesToggled && (
+            <Wrap spacing="10px" justify="center" p="5">
+              <IconButton
+                colorScheme="cyan"
+                onClick={() => paginationButtonClick(1)}
+                icon={<AiOutlineArrowLeft size="20px" />}
+              />
+              {Array.from(Array(pagination.totalPages), (e, i) => {
+                return (
+                  <Button
+                    key={i}
+                    colorScheme={
+                      pagination.currentPage === i + 1 ? "cyan" : "gray"
+                    }
+                    onClick={() => paginationButtonClick(i + 1)}>
+                    {i + 1}
+                  </Button>
+                );
+              })}
+              <IconButton
+                colorScheme="cyan"
+                onClick={() => paginationButtonClick(pagination.totalPages)}
+                icon={<AiOutlineArrowRight size="20px" />}
+              />
+            </Wrap>
+          )}
         </Box>
       )}
     </>
