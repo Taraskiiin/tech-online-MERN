@@ -25,7 +25,6 @@ const ProductsScreen = () => {
     dispatch(getProducts(page));
   };
 
-  console.log(pagination);
   return (
     <>
       {products?.length >= 1 && (
